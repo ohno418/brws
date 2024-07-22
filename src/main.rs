@@ -6,6 +6,7 @@ struct URL {
 }
 
 impl URL {
+    /// Parses a URL string and creates a new `URL`.
     fn new(url: &str) -> Result<Self, String> {
         let (scheme, rest) = match url.split_once("://") {
             Some((scheme, rest)) => (scheme.into(), rest),
