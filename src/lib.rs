@@ -32,7 +32,8 @@ pub fn request(url: &str) -> Result<(), String> {
         return Err("Failed to receiver a response".into());
     };
 
-    // Parse the response headers.
+    // TODO: Move to another module and build a struct.
+    // Parse the response.
     let mut res_lines = response.split("\r\n");
     // status line:
     let status_line = res_lines
@@ -46,7 +47,7 @@ pub fn request(url: &str) -> Result<(), String> {
         .expect("Expected a space in a status line");
     // other headers:
     let mut headers: HashMap<String, String> = HashMap::new();
-    for line in res_lines {
+    for line in res_lines.by_ref() {
         if line.is_empty() {
             break;
         }
@@ -61,10 +62,18 @@ pub fn request(url: &str) -> Result<(), String> {
             value.trim().to_string(),
         );
     }
+    // Make sure that the response wasn't sent in an unusual way.
+    assert!(headers.get("transfer-encoding").is_none());
+    assert!(headers.get("content-encoding").is_none());
+    // body:
+    let body = res_lines.collect::<Vec<&str>>().join("\r\n");
 
     dbg!(&response);
     dbg!(&(version, status, explanation));
     dbg!(&headers);
+    dbg!(&body);
+
+    // The stream is closed when the value is dropped.
 
     Ok(())
 }
