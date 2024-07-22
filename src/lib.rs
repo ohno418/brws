@@ -54,7 +54,12 @@ pub fn request(url: &str) -> Result<(), String> {
         let (key, value) = line
             .split_once(" ")
             .expect("Expected a space in a resonse headers");
-        headers.insert(key.into(), value.into());
+        headers.insert(
+            // Headers are case-insensitive. Normalize them to lower case.
+            key.to_lowercase(),
+            // Strip off extra whitespaces from header values.
+            value.trim().to_string(),
+        );
     }
 
     dbg!(&response);
