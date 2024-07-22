@@ -20,10 +20,10 @@ pub fn parse_response(res: &str) -> Result<Response, String> {
         .ok_or("Failed to get HTTP response status line".to_string())?;
     let (version, rest) = status_line
         .split_once(" ")
-        .ok_or("Expected a space in a status line".to_string())?;
+        .ok_or("Expected more than one space in a status line".to_string())?;
     let (status, explanation) = rest
         .split_once(" ")
-        .ok_or("Expected a space in a status line".to_string())?;
+        .ok_or("Expected more than one space in a status line".to_string())?;
 
     // other headers
     let mut headers: HashMap<String, String> = HashMap::new();
