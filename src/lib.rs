@@ -28,11 +28,11 @@ pub fn request(url: &str) -> Result<(), String> {
     }
 
     // Handle a response.
-    let mut response = String::new();
-    if stream.read_to_string(&mut response).is_err() {
+    let mut res_buf = String::new();
+    if stream.read_to_string(&mut res_buf).is_err() {
         return Err("Failed to receiver a response".into());
     };
-    let response = parse_response(&response)?;
+    let response = parse_response(&res_buf)?;
 
     dbg!(&response);
 
