@@ -7,23 +7,25 @@ struct URL {
 
 impl URL {
     fn new(url: &str) -> Result<Self, String> {
-        let mut scheme_and_rest: Vec<String> = url.split("://").map(|s| s.into()).collect();
-        if scheme_and_rest.len() != 2 {
-            return Err("Excpected an URL that has a scheme".into());
+        let (scheme, rest) = match url.split_once("://") {
+            Some((scheme, rest)) => (scheme.into(), rest),
+            None => return Err("Missing scheme".into()),
+        };
+
+        // Error with multiple schemes.
+        if rest.find("://").is_some() {
+            return Err("Multiple schemes found.".into());
         }
 
-        let (scheme, rest) = (
-            std::mem::replace(&mut scheme_and_rest[0], "".into()),
-            std::mem::replace(&mut scheme_and_rest[1], "".into()),
-        );
+        let (host, path) = match rest.split_once("/") {
+            Some((host, path)) => (host.to_string(), format!("/{}", path)),
+            None => (rest.to_string(), "/".into()),
+        };
 
-        let mut host_and_rest: Vec<String> = rest.split("/").map(|s| s.into()).collect();
-        if host_and_rest.len() < 1 {
-            return Err("Excpected an URL that has a scheme".into());
+        // Error with no host.
+        if host.is_empty() {
+            return Err("Missing host".into());
         }
-
-        let host = std::mem::replace(&mut host_and_rest[0], "".into());
-        let path = host_and_rest.join("/");
 
         Ok(URL { scheme, host, path })
     }
@@ -43,13 +45,17 @@ mod tests {
         let url = URL::new("http://example.com").unwrap();
         assert_eq!(url.scheme, "http");
         assert_eq!(url.host, "example.com");
-        assert_eq!(url.path, "");
+        assert_eq!(url.path, "/");
     }
 
     #[test]
     fn new_fail() {
         // No scheme.
         let url = URL::new("example.com");
+        assert!(url.is_err());
+
+        // No host.
+        let url = URL::new("http://");
         assert!(url.is_err());
 
         // Multiple schemes.
