@@ -1,8 +1,5 @@
-mod url;
-
-use crate::url::URL;
+use brws::request;
 
 fn main() {
-    let url = URL::new("http://example.org/path/to/somewhere.html");
-    println!("{:?}", url);
+    request("http://example.org/path/to/somewhere.html");
 }
