@@ -26,7 +26,6 @@ pub fn parse_response(res: &str) -> Result<Response, String> {
         .ok_or("Expected a space in a status line".to_string())?;
 
     // other headers
-    // Parse the response.
     let mut headers: HashMap<String, String> = HashMap::new();
     for line in res_lines.by_ref() {
         if line.is_empty() {
