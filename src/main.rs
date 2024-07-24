@@ -1,5 +1,5 @@
-use brws::request;
+use brws::load;
 
 fn main() {
-    request("http://example.org/path/to/somewhere.html").unwrap();
+    load("http://example.org/index.html").unwrap();
 }

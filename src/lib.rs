@@ -1,12 +1,14 @@
+mod html;
 mod response;
 mod url;
 
+use crate::html::parse_html;
 use crate::response::parse_response;
 use crate::url::parse_url;
 use std::io::{Read, Write};
 use std::net::TcpStream;
 
-pub fn request(url: &str) -> Result<(), String> {
+pub fn load(url: &str) -> Result<(), String> {
     let url = parse_url(url)?;
 
     // Create a socket.
@@ -27,16 +29,15 @@ pub fn request(url: &str) -> Result<(), String> {
         return Err("Failed to send a request".into());
     }
 
-    // Handle a response.
+    // Receive a response.
     let mut res_buf = String::new();
     if stream.read_to_string(&mut res_buf).is_err() {
         return Err("Failed to receiver a response".into());
     };
     let response = parse_response(&res_buf)?;
 
-    dbg!(&response);
-
-    // The stream is closed when the value is dropped.
+    // Parse a HTML body and print it.
+    print!("{}", parse_html(&response.body));
 
     Ok(())
 }
