@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 #[derive(Debug)]
+#[allow(dead_code)]
 pub struct Response {
     pub version: String,
     pub status: String,
