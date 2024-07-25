@@ -1,5 +1,5 @@
-use brws::load;
+use brws::run;
 
 fn main() {
-    load("http://example.org/index.html").unwrap();
+    run("http://example.org/index.html");
 }
